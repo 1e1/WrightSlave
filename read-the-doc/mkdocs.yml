@@ -1,0 +1,4 @@
+site_name: WrightSlave
+pages:
+- [index.md, Home]
+theme: spacelab #slate
