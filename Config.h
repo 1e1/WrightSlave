@@ -23,4 +23,4 @@
 #define READCHAR_TIMEOUT        byte(4)
 
 
-#endif CoreSlave_Config_h
+#endif

@@ -85,4 +85,4 @@ const boolean PinoutSchedule::hasPin(const uint8_t iPin)
 
 
 
-#endif CoreSlave_PinoutSchedule_h
+#endif

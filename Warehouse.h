@@ -86,4 +86,4 @@ void Warehouse<T>::push(const T item)
 
 
 
-#endif CoreSlave_Warehouse_h
+#endif

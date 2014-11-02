@@ -125,4 +125,4 @@ const uint8_t Core::bufferIsPrefixOf_P(const prog_char* str)
 
 
 
-#endif CoreSlave_Core_h
+#endif

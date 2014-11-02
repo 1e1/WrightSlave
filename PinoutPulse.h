@@ -27,4 +27,4 @@ class PinoutPulse : public Pinout {
 
 
 
-#endif CoreSlave_PinoutPulse_h
+#endif

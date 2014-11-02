@@ -51,4 +51,4 @@ void PinoutDigital::setValue(const uint8_t v)
 
 
 
-#endif CoreSlave_PinoutDigital_h
+#endif

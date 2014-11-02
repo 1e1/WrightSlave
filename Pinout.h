@@ -34,4 +34,4 @@ class Pinout {
 
 
 
-#endif CoreSlave_Pinout_h
+#endif
