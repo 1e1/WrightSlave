@@ -101,8 +101,8 @@ void Core::processTimer(const boolean fullYear, const uint8_t dayOfWeek, const u
     LOG("schedule#"); LOGLN((uint8_t)current->getPin();)
     LOG("  |  value: "); LOGLN((uint8_t)current->getValue());
 
-    if (current->isActive()) {
-      state = current->is(fullYear, dayOfWeek, hour);
+    state = current->is(fullYear, dayOfWeek, hour);
+    if (state ^ current->isActive()) {
 
       LOG("  |  state: "); LOGLN((boolean)state);
       LOG("  |  pins:");
