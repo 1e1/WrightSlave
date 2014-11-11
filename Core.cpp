@@ -77,9 +77,9 @@ char    Core::_buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
 uint8_t Core::_bufferSize;
 
 
-Warehouse<PinoutDigital>* Core::digitals;
-Warehouse<PinoutPulse>* Core::pulses;
-Warehouse<PinoutSchedule>* Core::schedules;
+Warehouse<PinoutPulse*>*    Core::pulses    = new Warehouse<PinoutPulse*>();
+Warehouse<PinoutDigital*>*  Core::digitals  = new Warehouse<PinoutDigital*>();
+Warehouse<PinoutSchedule*>* Core::schedules = new Warehouse<PinoutSchedule*>();
 
 
 
@@ -96,7 +96,7 @@ void Core::processTimer(const boolean fullYear, const uint8_t dayOfWeek, const u
 {
   boolean state;
   Pinout* pinout;
-  Warehouse_FOREACH(PinoutSchedule, Core::schedules, current)
+  Warehouse_FOREACHPP(PinoutSchedule, Core::schedules, current)
 
     LOG("schedule#"); LOGLN((uint8_t)current->getPin();)
     LOG("  |  value: "); LOGLN((uint8_t)current->getValue());
@@ -122,7 +122,7 @@ void Core::processTimer(const boolean fullYear, const uint8_t dayOfWeek, const u
       LOGLN();
     }
     LOG("  |--"); LOGLN();
-  Warehouse_ENDFOREACH
+  Warehouse_ENDFOREACHPP
 }
 
 
@@ -248,6 +248,27 @@ void Core::sendBufferLn()
 }
 
 
+void Core::registerPulse(const byte pin, const prog_char* label)
+{
+  PinoutPulse* p = new PinoutPulse(pin, label);
+  Core::pulses->push(p);
+}
+
+
+void Core::registerDigital(const byte pin, const prog_char* label, const boolean isNC)
+{
+  PinoutDigital* p = new PinoutDigital(pin, label, isNC);
+  Core::digitals->push(p);
+}
+
+
+void Core::registerSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49)
+{
+  PinoutSchedule* p = new PinoutSchedule(id, label, isNC, schedule, digitals_22_49);
+  Core::schedules->push(p);
+}
+
+
 
 
 /***********************************************************
@@ -283,105 +304,13 @@ uint8_t Core::readUint8()
   // return (uint8_t) _currentStream->parseInt();
 }
 
-/*
-uint8_t Core::getPinoutIndexOfPin(uint8_t pin, Pinout pinouts[], const uint8_t size)
+
+Pinout* Core::getPinoutAtPin(uint8_t pin, Warehouse<Pinout*>* pinouts)
 {
-  for (uint8_t index=0; index<size; index++) {
-    if (pinouts[index].getPin() == pin) {
-      return index;
-    }
-  }
-  return PIN_NOT_FOUND;
-}
-
-
-uint8_t Core::getPulsePinoutIndexOfPin(uint8_t pin)
-{
-  for (uint8_t index=0; index<Core::pulses_len; index++) {
-    if (Core::pulses[index].getPin() == pin) {
-      return index;
-    }
-  }
-  return PIN_NOT_FOUND;
-}
-
-
-uint8_t Core::getDigitalPinoutIndexOfPin(uint8_t pin)
-{
-  for (uint8_t index=0; index<Core::digitals_len; index++) {
-    if (Core::digitals[index].getPin() == pin) {
-      return index;
-    }
-  }
-  return PIN_NOT_FOUND;
-}
-
-
-uint8_t Core::getSchedulePinoutIndexOfPin(uint8_t pin)
-{
-  for (uint8_t index=0; index<Core::schedules_len; index++) {
-    if (Core::schedules[index].getPin() == pin) {
-      return index;
-    }
-  }
-  return PIN_NOT_FOUND;
-}
-*/
-
-Pinout* Core::getPinoutAtPin(uint8_t pin, Warehouse<Pinout>* pinouts)
-{
-//  Warehouse_FOREACH(Pinout, pinouts, element)
-//  /* * /
-//  {
-//    Warehouse<Pinout>::iterator __itr = pinouts->begin();
-//    Pinout* element;
-//    while (NULL != __itr) {
-//      element = &((Pinout) (__itr->item));
-//  /* */
-//    if (pin == element->getPin()) {
-//      return element;
-//    }
-//  Warehouse_ENDFOREACH
-//  /* * /
-//      __itr = __itr->next;
-//    }
-//  }
-//  /* */
-  return NULL;
-}
-
-
-PinoutPulse* Core::getPinoutPulseAtPin(uint8_t pin)
-{
-  //return (PinoutPulse*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout>*) (Core::pulses)));
-  Warehouse_FOREACH(PinoutPulse, Core::pulses, element)
+  Warehouse_FOREACHPP(Pinout, pinouts, element)
     if (pin == element->getPin()) {
       return element;
     }
-  Warehouse_ENDFOREACH
-  return NULL;
-}
-
-
-PinoutDigital* Core::getPinoutDigitalAtPin(uint8_t pin)
-{
-  //return (PinoutDigital*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout>*) (Core::digitals)));
-  Warehouse_FOREACH(PinoutDigital, Core::digitals, element)
-    if (pin == element->getPin()) {
-      return element;
-    }
-  Warehouse_ENDFOREACH
-  return NULL;
-}
-
-
-PinoutSchedule* Core::getPinoutScheduleAtPin(uint8_t pin)
-{
-  //return (PinoutSchedule*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout>*) (Core::schedules)));
-  Warehouse_FOREACH(PinoutSchedule, Core::schedules, element)
-    if (pin == element->getPin()) {
-      return element;
-    }
-  Warehouse_ENDFOREACH
+  Warehouse_ENDFOREACHPP
   return NULL;
 }

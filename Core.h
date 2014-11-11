@@ -47,20 +47,14 @@ class Core {
   static void sendBuffer();
   static void sendBufferLn();
 
-  static Warehouse<PinoutDigital> *digitals;
-  static Warehouse<PinoutPulse> *pulses;
-  static Warehouse<PinoutSchedule> *schedules;
-/*
-  static PinoutDigital digitals[];
-  static PinoutPulse   pulses[];
-  static Schedule         schedules[];
+  static void registerPulse   (const byte pin, const prog_char* label);
+  static void registerDigital (const byte pin, const prog_char* label, const boolean isNC);
+  static void registerSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49);
 
-  static const uint8_t digitals_len;
-  static const uint8_t pulses_len;
-  static const uint8_t messages_len;
-  static const uint8_t schedules_len;
-  static const uint8_t total_len;
-*/
+  static Warehouse<PinoutPulse*>*    pulses;
+  static Warehouse<PinoutDigital*>*  digitals;
+  static Warehouse<PinoutSchedule*>* schedules;
+
   static inline void printBuffer() {for(uint8_t i=0; i<_bufferSize; i++) Serial.print(_buffer[i]); };
 
   // inline
@@ -69,17 +63,14 @@ class Core {
   static const boolean  bufferIsEqualTo_P(const prog_char* str);
   static const uint8_t bufferIsPrefixOf_P(const prog_char* str);
 
+  static PinoutPulse*    getPinoutPulseAtPin(uint8_t pin);
+  static PinoutDigital*  getPinoutDigitalAtPin(uint8_t pin);
+  static PinoutSchedule* getPinoutScheduleAtPin(uint8_t pin);
+
   protected:
   static void autoSendBuffer();
   static uint8_t readUint8();
-  //static uint8_t getPinoutIndexOfPin(uint8_t pin, Pinout pinouts[], const uint8_t size);
-  //static uint8_t getPulsePinoutIndexOfPin(uint8_t pin);
-  //static uint8_t getDigitalPinoutIndexOfPin(uint8_t pin);
-  //static uint8_t getSchedulePinoutIndexOfPin(uint8_t pin);
-  static Pinout* getPinoutAtPin(uint8_t pin, Warehouse<Pinout> *pinouts);
-  static PinoutPulse* getPinoutPulseAtPin(uint8_t pin);
-  static PinoutDigital* getPinoutDigitalAtPin(uint8_t pin);
-  static PinoutSchedule* getPinoutScheduleAtPin(uint8_t pin);
+  static Pinout* getPinoutAtPin(uint8_t pin, Warehouse<Pinout*>* pinouts);
 
   static Stream*  _currentStream;
   static char     _buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
@@ -120,6 +111,27 @@ __attribute__((always_inline)) inline
 const uint8_t Core::bufferIsPrefixOf_P(const prog_char* str)
 {
   return Core::bufferEqualsLength_P(str) == strlen_P(str);
+};
+
+
+__attribute__((always_inline)) inline
+PinoutPulse* Core::getPinoutPulseAtPin(uint8_t pin)
+{
+  return (PinoutPulse*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout*>*) (Core::pulses)));
+};
+
+
+__attribute__((always_inline)) inline
+PinoutDigital* Core::getPinoutDigitalAtPin(uint8_t pin)
+{
+  return (PinoutDigital*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout*>*) (Core::digitals)));
+};
+
+
+__attribute__((always_inline)) inline
+PinoutSchedule* Core::getPinoutScheduleAtPin(uint8_t pin)
+{
+  return (PinoutSchedule*) (Core::getPinoutAtPin(pin, (Warehouse<Pinout*>*) (Core::schedules)));
 };
 
 

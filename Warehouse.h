@@ -8,15 +8,37 @@
 
 
 #define Warehouse_FOREACH(T, list, element) \
-  { \
-    Warehouse<T>::iterator __itr = list->begin(); \
-    T* element; \
-    while (NULL != __itr) { \
-      element = &(__itr->item);
+    { \
+        Warehouse<T>::iterator __itr = list.begin(); \
+        T element; \
+        while (NULL != __itr) { \
+            element = __itr->item;
 #define Warehouse_ENDFOREACH \
-      __itr = __itr->next; \
-    } \
-  }
+            __itr = __itr->next; \
+        } \
+    }
+
+#define Warehouse_FOREACHP(T, list, element) \
+    { \
+        Warehouse<T>::iterator __itr = list->begin(); \
+        T element; \
+        while (NULL != __itr) { \
+            element = (__itr->item);
+#define Warehouse_ENDFOREACHP \
+            __itr = __itr->next; \
+        } \
+    }
+
+#define Warehouse_FOREACHPP(T, list, element) \
+    { \
+        Warehouse<T*>::iterator __itr = list->begin(); \
+        T* element; \
+        while (NULL != __itr) { \
+            element = __itr->item;
+#define Warehouse_ENDFOREACHPP \
+            __itr = __itr->next; \
+        } \
+    }
 
 
 
