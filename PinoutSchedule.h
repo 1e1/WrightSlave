@@ -41,7 +41,7 @@ class PinoutSchedule : public PinoutDigital {
 
   public:
   PinoutSchedule();
-  PinoutSchedule(byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49);
+  PinoutSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49);
   const boolean is(const boolean fullYear, const uint8_t dayOfWeek, const unsigned int hour);
 
   // inline

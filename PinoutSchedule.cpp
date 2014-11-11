@@ -15,7 +15,7 @@ PinoutSchedule::PinoutSchedule()
 }
 
 
-PinoutSchedule::PinoutSchedule(byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49)
+PinoutSchedule::PinoutSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49)
 {
   this->init(id, label);
   this->_id.isNC  = isNC;

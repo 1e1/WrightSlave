@@ -12,8 +12,8 @@ class PinoutDigital : public Pinout {
 
   public:
   PinoutDigital();
-  PinoutDigital(byte pin, const prog_char* label, const boolean isNC);
-  PinoutDigital(byte pin, const prog_char* label, const boolean isNC, const boolean value);
+  PinoutDigital(const byte pin, const prog_char* label, const boolean isNC);
+  PinoutDigital(const byte pin, const prog_char* label, const boolean isNC, const boolean value);
   ~PinoutDigital();
 
   // inline

@@ -11,6 +11,7 @@
 class PinoutPulse : public Pinout {
 
   public:
+  PinoutPulse();
   PinoutPulse(const byte pin, const prog_char* label);
   PinoutPulse(const byte pin, const prog_char* label, uint8_t value);
   ~PinoutPulse();

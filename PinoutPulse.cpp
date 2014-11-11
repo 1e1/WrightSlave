@@ -10,6 +10,11 @@
 
 
 
+PinoutPulse::PinoutPulse()
+{
+}
+
+
 PinoutPulse::PinoutPulse(const byte pin, const prog_char* label)
 {
   this->init(pin, label);
