@@ -132,7 +132,7 @@ void Core::processLine()
   Pinout* pinout;
   uint8_t pin, value, watchdog = Core::digitals->size() + Core::pulses->size() + Core::schedules->size();
   // [0-9]+ OTHER [0-9]+ (OTHER [0-9]+ OTHER [0-9]+)
-  while (Core::_currentStream->available() && --watchdog) {
+  while (Core::_currentStream->available() && watchdog--) {
     type  = Core::_currentStream->read();
     pin   = Core::readUint8();
     value = Core::readUint8();
