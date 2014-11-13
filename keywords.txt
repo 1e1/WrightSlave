@@ -12,6 +12,11 @@ FastTimer	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+check	KEYWORD2
+clean	KEYWORD2
+cycleAction	KEYWORD2
+sectionAction	KEYWORD2
+
 begin	KEYWORD2
 update	KEYWORD2
 getDst	KEYWORD2
