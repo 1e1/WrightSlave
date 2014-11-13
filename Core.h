@@ -38,6 +38,7 @@ class Core {
   static void processTimer(const boolean fullYear, const uint8_t dayOfWeek, const unsigned int hour);
   static void processLine();
   static void readUntil(char terminator);
+  static void stateToBuffer();
   static void copyToBuffer  (uint8_t x);
   static void copyToBuffer  (char c);
   static void copyToBuffer_P(const prog_char* const data);
@@ -70,6 +71,7 @@ class Core {
   protected:
   static void autoSendBuffer();
   static uint8_t readUint8();
+  static void statusLineToBuffer(Pinout* pinout);
   static Pinout* getPinoutAtPin(uint8_t pin, Warehouse<Pinout*>* pinouts);
 
   static Stream*  _currentStream;
