@@ -66,12 +66,6 @@ Schedule Core::schedules[] =
 };
 */
 
-//const uint8_t Core::digitals_len   = ARRAYLEN(digitals);
-//const uint8_t Core::pulses_len     = ARRAYLEN(pulses);
-//const uint8_t Core::messages_len   = 0;//ARRAYLEN(messages);
-//const uint8_t Core::schedules_len  = ARRAYLEN(schedules);
-//const uint8_t Core::total_len      = ARRAYLEN(digitals) + ARRAYLEN(pulses)/* + ARRAYLEN(messages) */+ ARRAYLEN(schedules);
-
 Stream* Core::_currentStream;
 char    Core::_buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
 uint8_t Core::_bufferSize;

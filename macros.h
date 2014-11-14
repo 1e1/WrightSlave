@@ -3,14 +3,6 @@
 
 
 /** SETUP ALIAS **/
-#define NEWDIGITAL_NO(PIN, NAME)        NEWDIGITAL(PIN, NAME, false)
-#define NEWDIGITAL_NC(PIN, NAME)        NEWDIGITAL(PIN, NAME, true)
-#define NEWDIGITAL(PIN, NAME, B)        ConnectorDigital(PIN, Dictionary::NAME, B)
-#define NEWPULSE(PIN, NAME)             ConnectorPulse(PIN, Dictionary::NAME)
-#define NEWSCHEDULE_NO(ID, N, S, PINS)  NEWSCHEDULE(ID, N, false, S, PINS)
-#define NEWSCHEDULE_NC(ID, N, S, PINS)  NEWSCHEDULE(ID, N, true, S, PINS)
-#define NEWSCHEDULE(ID, N, B, S, PINS)  Schedule(ID, Dictionary::N, B, S, PINS)
-#define SCHEDULE(ID)                    schedule_ ## ID
 #define LCDCHAR(ch)                     static const uint8_t    ch[] PROGMEM
 #define LONGBYTES(b)                    static const prog_uchar  b[] PROGMEM
 #define LONGBYTEN(b, n)                 static const prog_uchar b[n] PROGMEM
@@ -29,8 +21,8 @@
 
 
 
-/** BUSY TOOLS **/
-#if BUSYLED_PIN
+/** BUSY TOOLS ** /
+#ifdef BUSYLED_PIN
   #define BUSYLED_HIGH digitalWrite(BUSYLED_PIN, HIGH);
   #define BUSYLED_WORK analogWrite(BUSYLED_PIN, 63);
   #define BUSYLED_IDLE analogWrite(BUSYLED_PIN, 15);
@@ -92,6 +84,11 @@ FOREACH (int, p2, c2, ARRAYLEN(c2) ){
 #define bitClear_boolean(value, bit)            ((value) &= ~(byte(1) << (bit)))
 #define bitWrite_boolean(value, bit, bitvalue)  (bitvalue ? bitSet_boolean(value, bit) : bitClear_boolean(value, bit))
 /** === **/
+
+
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
 
 
 #endif
