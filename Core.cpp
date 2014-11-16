@@ -10,26 +10,6 @@
 
 
 /*
-PinoutDigital Core::digitals[] =
-{ NEWDIGITAL_NC(22, relay11)
-, NEWDIGITAL_NO(24, relay12)
-, NEWDIGITAL_NO(26, relay13)
-, NEWDIGITAL_NO(28, relay14)
-, NEWDIGITAL_NC(30, relay15)
-, NEWDIGITAL_NO(32, relay16)
-, NEWDIGITAL_NO(34, relay17)
-, NEWDIGITAL_NO(36, relay18)
-
-//, NEWDIGITAL_NC(63, sendmail)
-//, NEWDIGITAL_NO(62, automatic)
-};
-
-
-PinoutPulse Core::pulses[] =
-{ //NEWPULSE(13, led)
-};
-
-
 Schedule Core::schedules[] =
 { NEWSCHEDULE_NC
   ( 10
@@ -71,10 +51,14 @@ char    Core::_buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
 uint8_t Core::_bufferSize;
 
 
-Warehouse<PinoutPulse*>*    Core::pulses    = new Warehouse<PinoutPulse*>();
-Warehouse<PinoutDigital*>*  Core::digitals  = new Warehouse<PinoutDigital*>();
-Warehouse<PinoutSchedule*>* Core::schedules = new Warehouse<PinoutSchedule*>();
-
+const Core::group Core::_groups[] =
+{ /*{ TYPE_MESSAGE , (Warehouse<Pinout*>*) new Warehouse<PinoutMessage*>() }
+, */{ TYPE_PULSE   , (Warehouse<Pinout*>*) new Warehouse<PinoutPulse*>() }
+, { TYPE_DIGITAL , (Warehouse<Pinout*>*) new Warehouse<PinoutDigital*>() }
+, { TYPE_SCHEDULE, (Warehouse<Pinout*>*) new Warehouse<PinoutSchedule*>() }
+};
+Warehouse<Pinout*>* Core::_pinouts = NULL;
+Pinout* Core::_pinout = NULL;
 
 
 
@@ -90,7 +74,9 @@ void Core::processTimer(const boolean fullYear, const uint8_t dayOfWeek, const u
 {
   boolean state;
   Pinout* pinout;
-  Warehouse_FOREACHPP(PinoutSchedule, Core::schedules, current)
+  Warehouse<Pinout*>* digitals = Core::getPinoutsOf(TYPE_DIGITAL);
+  Warehouse<PinoutSchedule*>* schedules = (Warehouse<PinoutSchedule*>*) Core::getPinoutsOf(TYPE_SCHEDULE);
+  Warehouse_FOREACHPP(PinoutSchedule, schedules, current)
 
     LOG("schedule#"); LOGLN((uint8_t)current->getPin();)
     LOG("  |  value: "); LOGLN((uint8_t)current->getValue());
@@ -106,7 +92,7 @@ void Core::processTimer(const boolean fullYear, const uint8_t dayOfWeek, const u
 
           LOG(" "); LOG((uint8_t)iPin);
 
-          if (NULL != (pinout=Core::getPinoutDigitalAtPin(iPin))) {
+          if (NULL != (pinout=Core::getPinoutAtPin(iPin, digitals))) {
             pinout->setValue(state);
           } else {
             digitalWrite(iPin, state);
@@ -124,32 +110,21 @@ void Core::processLine()
 {
   char type;
   Pinout* pinout;
-  uint8_t pin, value, watchdog = Core::digitals->size() + Core::pulses->size() + Core::schedules->size();
+  Warehouse<Pinout*>* pinouts;
+  uint8_t pin, value, watchdog = Core::size();
   // [0-9]+ OTHER [0-9]+ (OTHER [0-9]+ OTHER [0-9]+)
   while (Core::_currentStream->available() && watchdog--) {
     type  = Core::_currentStream->read();
     pin   = Core::readUint8();
     value = Core::readUint8();
     LOG("SET #"); LOG(type); LOG(pin); LOG(" <- "); LOGLN(value);
-    switch (type) {
 
-      case 'S':
-      pinout = Core::getPinoutScheduleAtPin(pin);
-      break;
-
-      case 'D':
-      // first, check if this digital is not controlled by a timer
-      pinout = Core::getPinoutDigitalAtPin(pin);
-      break;
-
-      case 'P':
-      pinout = Core::getPinoutPulseAtPin(pin);
-      break;
-
-    }
-
-    if (NULL != pinout) {
-      pinout->setValue(value);
+    pinouts = Core::getPinoutsOf(type);
+    if (NULL != pinouts) {
+      pinout = Core::getPinoutAtPin(pin, pinouts);
+      if (NULL != pinout) {
+        pinout->setValue(value);
+      }
     }
   }
 }
@@ -167,30 +142,15 @@ void Core::readUntil(char terminator)
 
 void Core::stateToBuffer()
 {
-  // schedules
-  Core::copyToBuffer_P(PSTR("\n=== SCHEDULES ===\n"));
-  // add IP info
-  Warehouse_FOREACHPP(PinoutSchedule, Core::schedules, element)
-    Core::statusLineToBuffer(element);
-  Warehouse_ENDFOREACHPP
-  // pulses
-  Core::copyToBuffer_P(PSTR("\n=== PULSES ===\n"));
-  Warehouse_FOREACHPP(PinoutPulse, Core::pulses, element)
-    Core::statusLineToBuffer(element);
-  Warehouse_ENDFOREACHPP
-  // digitals
-  Core::copyToBuffer_P(PSTR("\n=== DIGITALS ===\n"));
-  Warehouse_FOREACHPP(PinoutDigital, Core::digitals, element)
-    Core::statusLineToBuffer(element);
-  Warehouse_ENDFOREACHPP
-  // messages
-  /*
-  Core::copyToBuffer_P(PSTR("\n=== MESSAGES ===\n"));
-  // add IP info
-  for (uint8_t i=0; i < Core::messages_len; i++) {
-    USlave::statusLine(Core::messages[i], Core::messages[i].getValue());
+  uint8_t index = ARRAYLEN(Core::_groups);
+  while (index-->0) {
+    Core::copyToBuffer_P(PSTR("\n===\n"));
+    Core::copyToBuffer(Core::_groups[index].type);
+
+    Warehouse_FOREACHPP(Pinout, Core::_groups[index].pinouts, element)
+      Core::statusLineToBuffer(element);
+    Warehouse_ENDFOREACHPP
   }
-  */
   Core::copyToBuffer('\n');
 }
 
@@ -274,22 +234,59 @@ void Core::sendBufferLn()
 
 void Core::registerPulse(const byte pin, const prog_char* label)
 {
-  PinoutPulse* p = new PinoutPulse(pin, label);
-  Core::pulses->push(p);
+  Core::_pinouts = Core::getPinoutsOf(TYPE_PULSE);
+  Core::_pinout  = new PinoutPulse(pin, label);
+  Core::_pinouts->push(Core::_pinout);
 }
 
 
 void Core::registerDigital(const byte pin, const prog_char* label, const boolean isNC)
 {
-  PinoutDigital* p = new PinoutDigital(pin, label, isNC);
-  Core::digitals->push(p);
+  Core::_pinouts = Core::getPinoutsOf(TYPE_DIGITAL);
+  Core::_pinout  = new PinoutDigital(pin, label, isNC);
+  Core::_pinouts->push(Core::_pinout);
 }
 
 
 void Core::registerSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49)
 {
-  PinoutSchedule* p = new PinoutSchedule(id, label, isNC, schedule, digitals_22_49);
-  Core::schedules->push(p);
+  Core::_pinouts = Core::getPinoutsOf(TYPE_SCHEDULE);
+  Core::_pinout  = new PinoutSchedule(id, label, isNC, schedule, digitals_22_49);
+  Core::_pinouts->push(Core::_pinout);
+}
+
+
+Warehouse<Pinout*>* Core::getPinoutsOf(const char type)
+{
+  uint8_t i = ARRAYLEN(Core::_groups);
+  while (i-->0) {
+    if (type == Core::_groups[i].type) {
+      return Core::_groups[i].pinouts;
+    }
+  }
+  return NULL;
+}
+
+
+Pinout* Core::getPinoutAtPin(const uint8_t pin, Warehouse<Pinout*>* pinouts)
+{
+  Warehouse_FOREACHPP(Pinout, pinouts, element)
+    if (pin == element->getPin()) {
+      return element;
+    }
+  Warehouse_ENDFOREACHPP
+  return NULL;
+}
+
+
+const uint8_t Core::size()
+{
+  uint8_t size = 0;
+  uint8_t index = ARRAYLEN(Core::_groups);
+  while (index-->0) {
+    size += ((Core::_groups[index]).pinouts)->size();
+  }
+  return size;
 }
 
 
@@ -337,15 +334,4 @@ void Core::statusLineToBuffer(Pinout* pinout)
   Core::copyToBuffer('\t');
   Core::copyToBuffer_P(pinout->getLabel());
   Core::copyToBuffer('\n');
-}
-
-
-Pinout* Core::getPinoutAtPin(uint8_t pin, Warehouse<Pinout*>* pinouts)
-{
-  Warehouse_FOREACHPP(Pinout, pinouts, element)
-    if (pin == element->getPin()) {
-      return element;
-    }
-  Warehouse_ENDFOREACHPP
-  return NULL;
 }

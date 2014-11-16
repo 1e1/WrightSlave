@@ -3,7 +3,6 @@
 
 
 /** SETUP ALIAS **/
-#define LCDCHAR(ch)                     static const uint8_t    ch[] PROGMEM
 #define LONGBYTES(b)                    static const prog_uchar  b[] PROGMEM
 #define LONGBYTEN(b, n)                 static const prog_uchar b[n] PROGMEM
 #define LONGSTRING(str)                 static const prog_char str[] PROGMEM
