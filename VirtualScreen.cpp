@@ -12,15 +12,15 @@
 
 VirtualScreen::VirtualScreen()
 {
-  $this->_tab  = 0;
-  $this->_itr = NULL;
+  this->_tab  = 0;
+  this->_itr = NULL;
 }
 
 
 void VirtualScreen::previousTab()
 {
-  if (idx == 0) {
-    VirtualScreen::_tab = ARRAYLEN(Core::groups);
+  if (VirtualScreen::_tab == 0) {
+    VirtualScreen::_tab = Core::length();
   }
   VirtualScreen::_tab--;
 }
@@ -29,44 +29,39 @@ void VirtualScreen::previousTab()
 void VirtualScreen::nextTab()
 {
   VirtualScreen::_tab++;
-  if (idx == ARRAYLEN(Core::groups)) {
+  if (VirtualScreen::_tab == Core::length()) {
     VirtualScreen::_tab = 0;
   }
 }
 
 
-void VirtualScreen::previousMessage()
+void VirtualScreen::previousPage()
 {
-    Warehouse_FOREACHPP(Pinout, Core::groups[this->_tab]->pinouts, element)
-      Core::statusLineToBuffer(element);
-      if (this->_itr == element->next) {
-        return this->_itr == element;
-      }
-    Warehouse_ENDFOREACHPP
+  Warehouse<Pinout*>::iterator __itr = Core::groups[this->_tab].pinouts->begin();
+  while (NULL != __itr) {
+    if (this->_itr == __itr->next) {
+      this->_itr == __itr;
+      return;
+    }
+    __itr = __itr->next;
+  }
 }
 
 
-void VirtualScreen::nextMessage()
+void VirtualScreen::nextPage()
 {
-  if (NULL != this->_node->next) {
-    this->_itr = this->_itr->next;
+  if (NULL == this->_itr->next) {
+    this->_itr = Core::groups[this->_tab].pinouts->begin();
   } else {
-    this->_itr = Core::groups[this->_tab]->pinouts->begin();
+    this->_itr = this->_itr->next;
   }
 }
 
 
-void VirtualScreen::nextTab()
-{
-  VirtualScreen::_tab++;
-  if (idx == ARRAYLEN(Core::groups)) {
-    VirtualScreen::_tab = 0;
-  }
-}
 
 const prog_char* VirtualScreen::getTitle()
 {
-  switch(Core::groups[this->_tab]->type) {
+  switch(Core::groups[this->_tab].type) {
     
   }
   return PSTR("TODO");
@@ -74,7 +69,7 @@ const prog_char* VirtualScreen::getTitle()
 
 Pinout* VirtualScreen::getPinout()
 {
-  return $this->_itr->item;
+  return this->_itr->item;
 }
 
 const uint8_t VirtualScreen::getPageNumber()
@@ -85,5 +80,5 @@ const uint8_t VirtualScreen::getPageNumber()
 
 const uint8_t VirtualScreen::getLastPageNumber()
 {
-  return Core::groups[this->_tab]->pinouts->size();
+  return Core::groups[this->_tab].pinouts->size();
 }

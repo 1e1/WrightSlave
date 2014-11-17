@@ -39,10 +39,16 @@ const intfMessage STATIC_MESSAGES[] = {
 class Core {
 
   public:
+  struct group {
+    const char type;
+    Warehouse<Pinout*>* pinouts;
+  };
+
   static void processTimer(const boolean fullYear, const uint8_t dayOfWeek, const unsigned int hour);
   static void processLine();
   static void readUntil(char terminator);
   static void stateToBuffer();
+  static void statusLineToBuffer(Pinout* pinout);
   static void copyToBuffer  (uint8_t x);
   static void copyToBuffer  (char c);
   static void copyToBuffer_P(const prog_char* const data);
@@ -59,6 +65,7 @@ class Core {
   static const group groups[];
   static Warehouse<Pinout*>* getPinoutsOf(const char type);
   static Pinout* getPinoutAtPin(const uint8_t pin, Warehouse<Pinout*>* pinouts);
+  __attribute__((always_inline)) inline static const uint8_t length();
   static const uint8_t size();
   //static inline void printBuffer() {for(uint8_t i=0; i<_bufferSize; i++) Serial.print(_buffer[i]); };
 
@@ -74,12 +81,6 @@ class Core {
   protected:
   static void autoSendBuffer();
   static uint8_t readUint8();
-  static void statusLineToBuffer(Pinout* pinout);
-
-  struct group {
-    const char type;
-    Warehouse<Pinout*>* pinouts;
-  };
 
   static Stream* _currentStream;
   static char    _buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];

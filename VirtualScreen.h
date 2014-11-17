@@ -26,7 +26,7 @@ class VirtualScreen {
   void nextPage();
 
   const prog_char* getTitle();
-  Pinout* getPinout() {};
+  Pinout* getPinout();
 
   __attribute__((always_inline)) inline const uint8_t getTabNumber();
   __attribute__((always_inline)) inline const uint8_t getLastTabNumber();
@@ -37,7 +37,7 @@ class VirtualScreen {
   protected:
   uint8_t _bookmark;
   uint8_t _tab;
-  Warehouse<T*>::iterator _itr;
+  Warehouse<Pinout*>::iterator _itr;
 
 };
 
@@ -59,7 +59,7 @@ const uint8_t VirtualScreen::getTabNumber()
 __attribute__((always_inline)) inline
 const uint8_t VirtualScreen::getLastTabNumber()
 {
-  return ARRAYLEN(Core::groups);
+  return Core::length();
 }
 
 
