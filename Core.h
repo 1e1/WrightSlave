@@ -56,6 +56,7 @@ class Core {
   static void registerDigital (const byte pin, const prog_char* label, const boolean isNC);
   static void registerSchedule(const byte id, const prog_char* label, const boolean isNC, const unsigned int schedule, const unsigned long digitals_22_49);
 
+  static const group groups[];
   static Warehouse<Pinout*>* getPinoutsOf(const char type);
   static Pinout* getPinoutAtPin(const uint8_t pin, Warehouse<Pinout*>* pinouts);
   static const uint8_t size();
@@ -84,7 +85,6 @@ class Core {
   static char    _buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
   static uint8_t _bufferSize;
 
-  static const group         _groups[];
   static Warehouse<Pinout*>* _pinouts;
   static Pinout*             _pinout;
 

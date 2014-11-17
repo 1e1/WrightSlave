@@ -51,7 +51,7 @@ char    Core::_buffer[max(READBUFFERSIZE, WRITEBUFFERSIZE)];
 uint8_t Core::_bufferSize;
 
 
-const Core::group Core::_groups[] =
+const Core::group Core::groups[] =
 { /*{ TYPE_MESSAGE , (Warehouse<Pinout*>*) new Warehouse<PinoutMessage*>() }
 , */{ TYPE_PULSE   , (Warehouse<Pinout*>*) new Warehouse<PinoutPulse*>() }
 , { TYPE_DIGITAL , (Warehouse<Pinout*>*) new Warehouse<PinoutDigital*>() }
@@ -142,12 +142,12 @@ void Core::readUntil(char terminator)
 
 void Core::stateToBuffer()
 {
-  uint8_t index = ARRAYLEN(Core::_groups);
+  uint8_t index = ARRAYLEN(Core::groups);
   while (index-->0) {
     Core::copyToBuffer_P(PSTR("\n===\n"));
-    Core::copyToBuffer(Core::_groups[index].type);
+    Core::copyToBuffer(Core::groups[index].type);
 
-    Warehouse_FOREACHPP(Pinout, Core::_groups[index].pinouts, element)
+    Warehouse_FOREACHPP(Pinout, Core::groups[index].pinouts, element)
       Core::statusLineToBuffer(element);
     Warehouse_ENDFOREACHPP
   }
@@ -258,10 +258,10 @@ void Core::registerSchedule(const byte id, const prog_char* label, const boolean
 
 Warehouse<Pinout*>* Core::getPinoutsOf(const char type)
 {
-  uint8_t i = ARRAYLEN(Core::_groups);
+  uint8_t i = ARRAYLEN(Core::groups);
   while (i-->0) {
-    if (type == Core::_groups[i].type) {
-      return Core::_groups[i].pinouts;
+    if (type == Core::groups[i].type) {
+      return Core::groups[i].pinouts;
     }
   }
   return NULL;
@@ -282,9 +282,9 @@ Pinout* Core::getPinoutAtPin(const uint8_t pin, Warehouse<Pinout*>* pinouts)
 const uint8_t Core::size()
 {
   uint8_t size = 0;
-  uint8_t index = ARRAYLEN(Core::_groups);
+  uint8_t index = ARRAYLEN(Core::groups);
   while (index-->0) {
-    size += ((Core::_groups[index]).pinouts)->size();
+    size += ((Core::groups[index]).pinouts)->size();
   }
   return size;
 }
