@@ -43,7 +43,7 @@
 
 
 template<typename T> class Warehouse {
-    
+
 public:
     typedef struct node {
         T item;
@@ -53,9 +53,9 @@ public:
     
     Warehouse();
     ~Warehouse();
-    
+
     void push(const T item);
-    
+
     __attribute__((always_inline)) inline iterator begin() { return this->_head; };
     __attribute__((always_inline)) inline const uint8_t size() { return this->_size; };
     
