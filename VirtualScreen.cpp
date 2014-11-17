@@ -10,7 +10,7 @@
 
 
 /*
-void Pinout::init(const byte pin, const prog_char* label)
+void VirtualScreen::init(const byte pin, const prog_char* label)
 {
   this->_id.pin = pin;
   this->_label  = label;

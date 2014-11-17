@@ -11,11 +11,10 @@
 class VirtualScreen {
 
   public:
-  typedef enum { MESSAGE, PULSE, DIGITAL, SCHEDULE } Type;
-
-  __attribute__((always_inline)) inline static void setType(Type type) { _type = type; };
-  static void previousPinout();
-  __attribute__((always_inline)) inline static void nextPinout() { _pinout = _pinout; };
+  static void previousTab();
+  __attribute__((always_inline)) inline static void nextTab();
+  static void previousPage();
+  __attribute__((always_inline)) inline static void nextPage();
 
   static void getTitle();
   __attribute__((always_inline)) inline static void getPinout() {};
@@ -24,9 +23,8 @@ class VirtualScreen {
   static const uint8_t getLastPage();
 
   protected:
-  static Type _type;
+  static uint8_t _tab;
   static Pinout* _pinout;
-  static WarehousePinout* _pinout;
 
 };
 */
