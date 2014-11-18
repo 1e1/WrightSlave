@@ -9,12 +9,10 @@
 class Circuit {
 
   public:
-  virtual void cycleAction() {};
-  virtual void sectionAction() {};
-
-  virtual void begin() {};
-  virtual void check() {};
-  virtual void clean() {};
+  virtual void work()  =0;
+  virtual void idle()  =0;
+  virtual void check() =0;
+  virtual void clean() =0;
 
 };
 
