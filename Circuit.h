@@ -9,10 +9,10 @@
 class Circuit {
 
   public:
-  virtual void work()  =0;
-  virtual void idle()  =0;
-  virtual void check() =0;
-  virtual void clean() =0;
+  virtual void work()  {};
+  virtual void idle()  {};
+  virtual void check() {};
+  virtual void clean() {};
 
 };
 

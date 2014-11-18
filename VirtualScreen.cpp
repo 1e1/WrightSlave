@@ -85,7 +85,7 @@ const uint8_t VirtualScreen::resetPage()
 
 const uint8_t VirtualScreen::getPageNumber()
 {
-  return this->page;
+  return this->_page;
 }
 
 
