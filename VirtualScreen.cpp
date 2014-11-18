@@ -13,7 +13,7 @@
 VirtualScreen::VirtualScreen()
 {
   this->_tab  = 0;
-  this->_itr = NULL;
+  this->resetPage();
 }
 
 
@@ -45,6 +45,7 @@ void VirtualScreen::previousPage()
     }
     __itr = __itr->next;
   }
+  this->resetPage();
 }
 
 
@@ -62,7 +63,10 @@ void VirtualScreen::nextPage()
 const prog_char* VirtualScreen::getTitle()
 {
   switch(Core::groups[this->_tab].type) {
-    
+    case 'A': return PSTR("Analogic");
+    case 'P': return PSTR("Pulse");
+    case 'D': return PSTR("Digital");
+    case 'S': return PSTR("Schedule");
   }
   return PSTR("TODO");
 }
@@ -72,9 +76,16 @@ Pinout* VirtualScreen::getPinout()
   return this->_itr->item;
 }
 
+const uint8_t VirtualScreen::resetPage()
+{
+  this->_page = 0;
+  this->_itr = NULL;
+}
+
+
 const uint8_t VirtualScreen::getPageNumber()
 {
-  return 0;
+  return this->page;
 }
 
 

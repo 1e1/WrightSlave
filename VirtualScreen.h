@@ -31,12 +31,14 @@ class VirtualScreen {
   __attribute__((always_inline)) inline const uint8_t getTabNumber();
   __attribute__((always_inline)) inline const uint8_t getLastTabNumber();
 
+  const uint8_t resetPage();
   const uint8_t getPageNumber();
   const uint8_t getLastPageNumber();
 
   protected:
   uint8_t _bookmark;
   uint8_t _tab;
+  uint8_t _page;
   Warehouse<Pinout*>::iterator _itr;
 
 };
