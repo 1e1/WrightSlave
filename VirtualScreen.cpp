@@ -12,7 +12,14 @@
 
 VirtualScreen::VirtualScreen()
 {
-  this->_tab  = 0;
+  this->_state(State.);
+  this->resetTab();
+}
+
+
+void VirtualScreen::resetTab()
+{
+  this->_tab = 0;
   this->resetPage();
 }
 
@@ -35,6 +42,13 @@ void VirtualScreen::nextTab()
 }
 
 
+void VirtualScreen::resetPage()
+{
+  this->_page = 0;
+  this->_itr = Core::groups[this->_tab].pinouts->begin();
+}
+
+
 void VirtualScreen::previousPage()
 {
   Warehouse<Pinout*>::iterator __itr = Core::groups[this->_tab].pinouts->begin();
@@ -45,41 +59,28 @@ void VirtualScreen::previousPage()
     }
     __itr = __itr->next;
   }
-  this->resetPage();
 }
 
 
 void VirtualScreen::nextPage()
 {
-  if (NULL == this->_itr->next) {
-    this->_itr = Core::groups[this->_tab].pinouts->begin();
+  if (NULL == this->_itr || NULL == this->_itr->next) {
+    this->resetPage();
   } else {
     this->_itr = this->_itr->next;
   }
 }
 
 
-
 const prog_char* VirtualScreen::getTitle()
 {
-  switch(Core::groups[this->_tab].type) {
-    case 'A': return PSTR("Analogic");
-    case 'P': return PSTR("Pulse");
-    case 'D': return PSTR("Digital");
-    case 'S': return PSTR("Schedule");
-  }
-  return PSTR("TODO");
+  return Core::groups[this->_tab].title;
 }
+
 
 Pinout* VirtualScreen::getPinout()
 {
   return this->_itr->item;
-}
-
-const uint8_t VirtualScreen::resetPage()
-{
-  this->_page = 0;
-  this->_itr = NULL;
 }
 
 

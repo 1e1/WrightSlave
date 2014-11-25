@@ -1,12 +1,12 @@
-#ifndef CoreSlave_Circuit_h
-#define CoreSlave_Circuit_h
+#ifndef CoreSlave_AbstractCircuit_h
+#define CoreSlave_AbstractCircuit_h
 
 
 
 #include <Arduino.h>
 
 
-class Circuit {
+class AbstractCircuit {
 
   public:
   virtual void work()  {};

@@ -41,6 +41,7 @@ class Core {
   public:
   struct group {
     const char type;
+    const prog_char* title;
     Warehouse<Pinout*>* pinouts;
   };
 

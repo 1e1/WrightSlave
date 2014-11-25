@@ -15,13 +15,20 @@
 #define SMASK_PAGE_INC        B1
 
 
-class VirtualScreen {
+class VirtualScreen : public AbstractCircuit, public Observable, public Observer {
 
   public:
-  VirtualScreen();
+  typedef enum { DOWN, IDLE, UP } State;
 
+  VirtualScreen() : Observable();
+
+  void update(Observable* observable);
+
+  void resetTab();
   void previousTab();
   void nextTab();
+
+  void resetPage();
   void previousPage();
   void nextPage();
 
@@ -31,14 +38,16 @@ class VirtualScreen {
   __attribute__((always_inline)) inline const uint8_t getTabNumber();
   __attribute__((always_inline)) inline const uint8_t getLastTabNumber();
 
-  const uint8_t resetPage();
   const uint8_t getPageNumber();
   const uint8_t getLastPageNumber();
 
   protected:
-  uint8_t _bookmark;
   uint8_t _tab;
   uint8_t _page;
+  struct {
+    byte state : 2;
+    byte timer : 6;
+  } _state;
   Warehouse<Pinout*>::iterator _itr;
 
 };

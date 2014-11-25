@@ -52,10 +52,10 @@ uint8_t Core::_bufferSize;
 
 
 const Core::group Core::groups[] =
-{ /*{ TYPE_MESSAGE , (Warehouse<Pinout*>*) new Warehouse<PinoutMessage*>() }
-, */{ TYPE_PULSE   , (Warehouse<Pinout*>*) new Warehouse<PinoutPulse*>() }
-, { TYPE_DIGITAL , (Warehouse<Pinout*>*) new Warehouse<PinoutDigital*>() }
-, { TYPE_SCHEDULE, (Warehouse<Pinout*>*) new Warehouse<PinoutSchedule*>() }
+{ /*{ TYPE_MESSAGE , PSTR("Messages") , (Warehouse<Pinout*>*) new Warehouse<PinoutMessage*>() }
+, */{ TYPE_PULSE   , PSTR("Pulses")   , (Warehouse<Pinout*>*) new Warehouse<PinoutPulse*>() }
+, { TYPE_DIGITAL , PSTR("Digitals") , (Warehouse<Pinout*>*) new Warehouse<PinoutDigital*>() }
+, { TYPE_SCHEDULE, PSTR("Schedules"), (Warehouse<Pinout*>*) new Warehouse<PinoutSchedule*>() }
 };
 Warehouse<Pinout*>* Core::_pinouts = NULL;
 Pinout* Core::_pinout = NULL;
